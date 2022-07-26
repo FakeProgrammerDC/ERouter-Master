@@ -23,7 +23,7 @@ public class Utils {
     public static boolean isFastDoubleClick() {
         long time = System.currentTimeMillis();
         long timeD = time - lastClickTime;
-        if (0 < timeD && timeD < 400) {
+        if (0 < timeD && timeD < 50) {
             return true;
         }
         lastClickTime = time;

@@ -33,14 +33,10 @@ public class PayActivity extends AppCompatActivity {
 
         TextView textView = findViewById(R.id.payText);
         textView.setOnClickListener(view -> {
-            StartActivityUtil.getInstance().startSettingActivity();
+            StartActivityUtil.getInstance().startLoginActivity("cs");
+            //PayActivity.this.startActivity(intent);
         });
-//        AppLog.i(TAG,"BindExtra key = %s");
-//        textView.setText(getIntent().getStringExtra("key") + getIntent().getStringExtra("key2"));
-//        void startPayActivity(@Extra("key") String key,@Extra("key2") int key2,
-//        @Extra("key3") double key3,@Extra("key4") boolean key4,
-//        @Extra("key5") byte key5,@Extra("key6") char key6,
-//        @Extra("key7") short key7,@Extra("key8") long key8,@Extra("key9") float key9);
+
         Intent i = getIntent();
         print(i.getStringExtra("key"));
         print(i.getIntExtra("key2", 0) + "");
@@ -62,6 +58,6 @@ public class PayActivity extends AppCompatActivity {
     }
 
     public void print(String str) {
-        AppLog.i(TAG,"Extra = %s", str);
+        AppLog.i(TAG, "Extra = %s", str);
     }
 }

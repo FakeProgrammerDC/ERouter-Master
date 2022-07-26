@@ -6,11 +6,11 @@ import java.lang.reflect.Method;
 
 abstract class StartActivityMethod<T> {
 
-    static StartActivityMethod parseAnnotations(Method method) {
+    static StartActivityMethod parseAnnotations(ERouter router, Method method) {
 
-        RequestBody requestBody = RequestBody.parseAnnotations(method);
+        RequestBody requestBody = RequestBody.parseAnnotations(router, method);
 
-        return null;
+        return IntentStartActivityMethod.parseAnnotations(method, requestBody);
     }
 
     //传递方法参数值

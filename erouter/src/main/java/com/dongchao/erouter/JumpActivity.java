@@ -13,9 +13,9 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
-public class StartActivityMethodTest {
+public class JumpActivity {
 
-    private static final String TAG = "AppStartActivity";
+    private static final String TAG = "JumpActivity";
 
     private final Context currentContext;
     private final Class<?> loginActivityClass;
@@ -26,7 +26,8 @@ public class StartActivityMethodTest {
 
     private static Handler mHandler;
 
-    StartActivityMethodTest(Class<?> loginActivityClass, Class<?> targetClass, boolean isLogin, ERouter.LoginLogic loginLogic, Map<String, Object> parameterMap) {
+    JumpActivity(Class<?> loginActivityClass, Class<?> targetClass, boolean isLogin, ERouter.LoginLogic loginLogic, Map<String, Object> parameterMap) {
+        Objects.requireNonNull(Utils.getTopActivity(), "TopActivity == null");
         this.currentContext = Utils.getTopActivity();
         this.loginActivityClass = loginActivityClass;
         this.targetClass = targetClass;
@@ -36,13 +37,12 @@ public class StartActivityMethodTest {
         this.mHandler = new Handler(Looper.getMainLooper());
     }
 
-    public boolean start() {
-        AppLog.i(TAG, "启动了%s", "start");
+    public Intent getIntent() {
 
         synchronized (currentContext) {
             if (Utils.isFastDoubleClick()) {
                 AppLog.i(TAG, "触发了%s", "Utils.isFastDoubleClick()");
-                return true;
+                return null;
             }
         }
 
@@ -58,6 +58,18 @@ public class StartActivityMethodTest {
         //设置参数
         putExtra(intent);
 
+        return intent;
+    }
+
+    public boolean start() {
+        AppLog.i(TAG, "启动了-----%s", "start");
+
+        final Intent intent = getIntent();
+        if (intent == null) {
+            return false;
+        }
+
+        AppLog.i(TAG, "启动成功-----%s", "end");
         //主线程跳转
         runInMainThread(() -> {
             currentContext.startActivity(intent);
@@ -146,8 +158,8 @@ public class StartActivityMethodTest {
             return this;
         }
 
-        public StartActivityMethodTest build() {
-            return new StartActivityMethodTest(loginActivityClass, targetClass, isLogin, loginLogic, parameterMap);
+        public JumpActivity build() {
+            return new JumpActivity(loginActivityClass, targetClass, isLogin, loginLogic, parameterMap);
         }
     }
 }

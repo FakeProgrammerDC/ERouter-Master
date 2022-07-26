@@ -17,22 +17,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         findViewById(R.id.btnStartSetting).setOnClickListener(view -> {
-            if (StartActivityUtil.getInstance().startSettingActivity()){
-                AppLog.i("MainActivity","跳转成功");
-            }
-//            new Thread(() -> {
-//                for (int i = 0; i < 50; i++) {
-//                    StartActivityUtil.getInstance().startSettingActivity("测试");
-//                    StartActivityUtil.getInstance().startSettingActivity("测试");
-//                }
-//            }).start();
-//
-//            new Thread(() -> {
-//                for (int i = 0; i < 50; i++) {
-//                    StartActivityUtil.getInstance().startSettingActivity("测试2");
-//                    StartActivityUtil.getInstance().startSettingActivity("测试2");
-//                }
-//            }).start();
+//            if (StartActivityUtil.getInstance().startSettingActivity("ce")){
+//                AppLog.i("MainActivity","跳转成功");
+//            }
+            new Thread(() -> {
+                for (int i = 0; i < 20; i++) {
+                    StartActivityUtil.getInstance().startSettingActivity("测试");
+                    StartActivityUtil.getInstance().startSettingActivity("测试");
+                }
+            }).start();
+
+            new Thread(() -> {
+                for (int i = 0; i < 20; i++) {
+                    StartActivityUtil.getInstance().startSettingActivity("测试2");
+                    StartActivityUtil.getInstance().startSettingActivity("测试2");
+                }
+            }).start();
         });
 
         short s = 11;

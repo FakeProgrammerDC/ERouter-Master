@@ -14,14 +14,17 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class ERouter {
 
     private static final String TAG = "ERouter";
 
-    private final Class<?> loginActivityClass;
-    private final LoginLogic loginLogic;
+    private final Map<Method, StartActivityMethod<?>> startActivityMethodCache = new ConcurrentHashMap<>();
+
+    final Class<?> loginActivityClass;
+    final LoginLogic loginLogic;
 
     ERouter(Class<?> loginActivityClass, LoginLogic loginLogic) {
         this.loginActivityClass = loginActivityClass;
@@ -32,11 +35,27 @@ public class ERouter {
         if (!service.isInterface()) {
             throw new IllegalArgumentException("API declarations must be interfaces.");
         }
-        return (T) Proxy.newProxyInstance(service.getClassLoader(), new Class<?>[]{service}, (proxy, method, args) -> loadStartActivityMethod(method, args));
+        return (T) Proxy.newProxyInstance(service.getClassLoader(), new Class<?>[]{service},
+                (proxy, method, args) -> loadStartActivityMethod(method).invoke(args));
     }
 
-    Boolean loadStartActivityMethod(Method method, Object[] args) {
-            return null;
+
+    StartActivityMethod loadStartActivityMethod(Method method) {
+
+        StartActivityMethod result = startActivityMethodCache.get(method);
+        if (result != null) {
+            return result;
+        }
+
+        synchronized (startActivityMethodCache) {
+            result = startActivityMethodCache.get(method);
+            if (result == null) {
+                result = StartActivityMethod.parseAnnotations(this, method);
+                startActivityMethodCache.put(method, result);
+            }
+        }
+
+        return result;
     }
 
     public interface LoginLogic {
