@@ -1,7 +1,7 @@
 package com.dongchao.erouter.utils;
 
 /**
- * %s 字符串
+ *  %s 字符串
  */
 public class AppLog {
 
@@ -48,7 +48,6 @@ public class AppLog {
             android.util.Log.e(tag, log);
         }
     };
-
 
     private static LogImp logImp = debugLog;
 
@@ -114,5 +113,4 @@ public class AppLog {
         void printErrStackTrace(String tag, Throwable tr, final String format, final Object... obj);
 
     }
-
 }

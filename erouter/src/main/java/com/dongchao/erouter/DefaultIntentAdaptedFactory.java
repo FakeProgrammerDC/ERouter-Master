@@ -1,8 +1,6 @@
 package com.dongchao.erouter;
 
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 
 import com.dongchao.erouter.utils.AppLog;
 
@@ -11,7 +9,7 @@ import java.lang.reflect.Type;
 public class DefaultIntentAdaptedFactory extends IntentAdapter.Factory {
 
     @Override
-    public IntentAdapter<?> get(Type returnType) {
+    public IntentAdapter get(Type returnType) {
         if (getRawType(returnType) != Intent.class) {
             return null;
         }

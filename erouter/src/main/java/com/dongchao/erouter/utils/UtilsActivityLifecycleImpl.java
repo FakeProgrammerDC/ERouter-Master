@@ -24,8 +24,8 @@ final class UtilsActivityLifecycleImpl implements Application.ActivityLifecycleC
 
     private final LinkedList<Activity> mActivityList = new LinkedList<>();
 
-    void init(Application app) {
-        this.app = app;
+    void init(Application context) {
+        app = context;
         app.registerActivityLifecycleCallbacks(this);
     }
 

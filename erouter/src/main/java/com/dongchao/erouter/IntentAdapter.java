@@ -10,7 +10,7 @@ public interface IntentAdapter<T> {
     T adapt(IntentCall intentCall);
 
     abstract class Factory {
-        public abstract IntentAdapter<?> get(Type returnType);
+        public abstract IntentAdapter get(Type returnType);
 
         /**
          * 提取原始类型

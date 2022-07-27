@@ -22,7 +22,7 @@ final class RequestParameterFactory {
 
     private final ERouter.LoginLogic loginLogic;
     private final Class<?> loginActivityClass;
-    private final Method method;
+    //private final Method method;
     private final Class<?> targetClass;
     private final boolean isLogin;
     private final String[] parameterKeys;
@@ -30,7 +30,7 @@ final class RequestParameterFactory {
     private RequestParameterFactory(Builder builder) {
         loginLogic = builder.loginLogic;
         loginActivityClass = builder.loginActivityClass;
-        method = builder.method;
+        //method = builder.method;
         targetClass = builder.targetClass;
         isLogin = builder.isLogin;
         parameterKeys = builder.parameterKeys;
