@@ -3,7 +3,6 @@ package com.dongchao.erouter;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 
-import androidx.annotation.Nullable;
 
 import com.dongchao.erouter.Annotations.Extra;
 import com.dongchao.erouter.Annotations.TargetUrl;
@@ -11,14 +10,13 @@ import com.dongchao.erouter.utils.AppLog;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
-public class RequestBody {
+final class RequestParameterFactory {
 
     private static final String TAG = "RequestBody";
 
-    static RequestBody parseAnnotations(ERouter router, Method method) {
+    static RequestParameterFactory parseAnnotations(ERouter router, Method method) {
         return new Builder(router, method).build();
     }
 
@@ -29,7 +27,7 @@ public class RequestBody {
     private final boolean isLogin;
     private final String[] parameterKeys;
 
-    private RequestBody(Builder builder) {
+    private RequestParameterFactory(Builder builder) {
         loginLogic = builder.loginLogic;
         loginActivityClass = builder.loginActivityClass;
         method = builder.method;
@@ -84,7 +82,7 @@ public class RequestBody {
             this.parameterCount = parameterAnnotationsArray.length;
         }
 
-        RequestBody build() {
+        RequestParameterFactory build() {
             //方法注解
             for (Annotation annotation : methodAnnotations) {
                 if (annotation instanceof TargetUrl) {
@@ -100,10 +98,10 @@ public class RequestBody {
                 parameterKeys[p] = parseParameter(parameterAnnotationsArray[p]);
             }
 
-            return new RequestBody(this);
+            return new RequestParameterFactory(this);
         }
 
-        String parseParameter(@Nullable Annotation[] annotations) {
+        String parseParameter(Annotation[] annotations) {
             String result = null;
             if (annotations != null) {
                 for (Annotation annotation : annotations) {
@@ -113,19 +111,19 @@ public class RequestBody {
                     }
 
                     if (!TextUtils.isEmpty(result)) {
-                        throw new RuntimeException("有多个注解, 只允许存在一个");
+                        throw new RuntimeException("当前参数有多个注解, 只允许存在一个");
                     }
                     result = key;
                 }
             }
 
             if (TextUtils.isEmpty(result)) {
-                throw new RuntimeException("路由注解不能为空或者内容不能为空");
+                throw new RuntimeException("当前参数不能无注解或注解内容为空");
             }
             return result;
         }
 
-        String parseParameterAnnotation(@Nullable Annotation annotation) {
+        String parseParameterAnnotation(Annotation annotation) {
             if (annotation instanceof Extra) {
                 Extra extra = (Extra) annotation;
                 AppLog.i(TAG, "key = %s ", extra.value());

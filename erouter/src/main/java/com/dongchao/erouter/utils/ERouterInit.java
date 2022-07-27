@@ -1,5 +1,6 @@
 package com.dongchao.erouter.utils;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 
@@ -23,6 +24,15 @@ public class ERouterInit {
             ERouterInit.initialized = true;
         }
 
-        Utils.init((Application) ctx.getApplicationContext());
+        init((Application) ctx.getApplicationContext());
     }
+
+    public static void init(Application app) {
+        UtilsActivityLifecycleImpl.INSTANCE.init(app);
+    }
+
+    public static void unInit(Application app) {
+        UtilsActivityLifecycleImpl.INSTANCE.unInit(app);
+    }
+
 }

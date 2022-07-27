@@ -1,3 +1,4 @@
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -10,8 +11,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://jitpack.io")
     }
 }
+
 rootProject.name = "ERouter-Master"
-include ':sample'
-include ':erouter'
+
+include(":sample")
+include(":erouter")

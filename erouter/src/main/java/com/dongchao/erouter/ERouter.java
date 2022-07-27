@@ -1,25 +1,15 @@
 package com.dongchao.erouter;
 
 
-import android.text.TextUtils;
-
-import androidx.annotation.Nullable;
-
-import com.dongchao.erouter.Annotations.Extra;
-import com.dongchao.erouter.Annotations.TargetUrl;
-import com.dongchao.erouter.utils.AppLog;
-
-import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 public class ERouter {
-
-    private static final String TAG = "ERouter";
+    //private static final String TAG = "ERouter";
 
     private final Map<Method, StartActivityMethod<?>> startActivityMethodCache = new ConcurrentHashMap<>();
 
@@ -38,7 +28,6 @@ public class ERouter {
         return (T) Proxy.newProxyInstance(service.getClassLoader(), new Class<?>[]{service},
                 (proxy, method, args) -> loadStartActivityMethod(method).invoke(args));
     }
-
 
     StartActivityMethod loadStartActivityMethod(Method method) {
 

@@ -12,7 +12,7 @@ import com.dongchao.sample.ui.SettingActivity;
 public interface StartActivityApi {
 
     @TargetUrl(value = SettingActivity.class, isLogin = false)
-    void startSettingActivity(@Extra("test") String str);
+    Intent startSettingActivity(@Extra("test") String str);
 
     @TargetUrl(value = PayActivity.class, isLogin = false)
     boolean startPayActivity(@Extra("key") String key, @Extra("key2") int key2,
@@ -24,5 +24,4 @@ public interface StartActivityApi {
 
     @TargetUrl(value = SettingActivity.class)
     void startLoginActivity(@Extra("test") String str);
-
 }

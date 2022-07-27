@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
-public class JumpActivity {
+public class JumpActivity implements IntentCall{
 
     private static final String TAG = "JumpActivity";
 
@@ -38,13 +38,13 @@ public class JumpActivity {
     }
 
     public Intent getIntent() {
-
-        synchronized (currentContext) {
+        AppLog.i(TAG, "in getIntent----- %s", "start");
+        //synchronized (currentContext) {
             if (Utils.isFastDoubleClick()) {
                 AppLog.i(TAG, "触发了%s", "Utils.isFastDoubleClick()");
                 return null;
             }
-        }
+        //}
 
         Intent intent;
 
@@ -57,7 +57,7 @@ public class JumpActivity {
 
         //设置参数
         putExtra(intent);
-
+        AppLog.i(TAG, "in getIntent----- %s", "end");
         return intent;
     }
 
@@ -69,9 +69,9 @@ public class JumpActivity {
             return false;
         }
 
-        AppLog.i(TAG, "启动成功-----%s", "end");
         //主线程跳转
         runInMainThread(() -> {
+            AppLog.i(TAG, "启动成功-----%s", "end");
             currentContext.startActivity(intent);
         });
 

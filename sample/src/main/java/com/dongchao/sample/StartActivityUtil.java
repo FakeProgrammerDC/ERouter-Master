@@ -7,10 +7,10 @@ import com.dongchao.sample.ui.LoginActivity;
 public class StartActivityUtil {
 
     private StartActivityUtil() {
-        ERouter routing = new ERouter.Builder()
+        ERouter router = new ERouter.Builder()
                 .setLoginActivityClass(LoginActivity.class)
                 .setLoginLogic(() -> false).build();
-        startActivity = routing.create(StartActivityApi.class);
+        startActivity = router.create(StartActivityApi.class);
     }
 
     private StartActivityApi startActivity;
