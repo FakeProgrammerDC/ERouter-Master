@@ -1,42 +1,27 @@
 package com.dongchao.erouter;
 
-import android.content.Intent;
-
-import com.dongchao.erouter.utils.AppLog;
-import com.dongchao.erouter.utils.Utils;
-
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 
 abstract class RouterStartActivityMethod<ReturnT> extends StartActivityMethod<ReturnT> {
 
-    private final ERouter router;
-    private final Method method;
+
     private final RequestParameterFactory requestBody;
 
-    RouterStartActivityMethod(ERouter router, Method method, RequestParameterFactory requestBody) {
-        this.router = router;
-        this.method = method;
+    RouterStartActivityMethod(RequestParameterFactory requestBody) {
         this.requestBody = requestBody;
     }
 
     static RouterStartActivityMethod parseAnnotations(ERouter router, Method method,
                                                       RequestParameterFactory requestBody) {
-        IntentAdapter intentAdapter = new DefaultIntentAdaptedFactory().get(method.getReturnType());
-        return new IntentAdapted(router, method, requestBody, intentAdapter);
+
+
+        RouterAdapter intentAdapter = router.routerAdapter(method.getReturnType());
+        return new IntentAdapted(requestBody, intentAdapter);
     }
 
     @Override
-    final ReturnT invoke(Object[] args) {
-        JumpActivity jumpActivity = requestBody.createJumpActivity(args);
-//        Type returnType = method.getReturnType();
-//        String typeName = returnType.toString();
-//        return adapt(jumpActivity);
-//        if (typeName.contains("Intent")) {
-//            return jumpActivity.getIntent();
-//        } else {
-//            return jumpActivity.start();
-//        }
+    final ReturnT invoke(TypeParameter typeParameter, Object[] args) {
+        JumpActivity jumpActivity = requestBody.createJumpActivity(typeParameter, args);
         return adapt(jumpActivity);
     }
 
@@ -44,10 +29,10 @@ abstract class RouterStartActivityMethod<ReturnT> extends StartActivityMethod<Re
 
     static final class IntentAdapted<ReturnT> extends RouterStartActivityMethod<ReturnT> {
 
-        private IntentAdapter intentAdapter;
+        private RouterAdapter intentAdapter;
 
-        IntentAdapted(ERouter router, Method method, RequestParameterFactory requestBody, IntentAdapter intentAdapter) {
-            super(router, method, requestBody);
+        IntentAdapted(RequestParameterFactory requestBody, RouterAdapter intentAdapter) {
+            super(requestBody);
             this.intentAdapter = intentAdapter;
         }
 

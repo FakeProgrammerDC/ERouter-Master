@@ -5,12 +5,12 @@ import com.dongchao.erouter.utils.Utils;
 
 import java.lang.reflect.Type;
 
-public interface IntentAdapter<T> {
+public interface RouterAdapter<T> {
 
     T adapt(IntentCall intentCall);
 
     abstract class Factory {
-        public abstract IntentAdapter get(Type returnType);
+        public abstract RouterAdapter get(Type returnType);
 
         /**
          * 提取原始类型

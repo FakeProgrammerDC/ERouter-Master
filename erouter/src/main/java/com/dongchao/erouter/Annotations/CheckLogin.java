@@ -1,17 +1,14 @@
 package com.dongchao.erouter.Annotations;
 
+import com.dongchao.erouter.ERouter;
+import com.dongchao.erouter.ERouter.LoginLogic;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TargetUrl {
-
-    //目标Activity
-    Class<?> value();
-
-    //如果使用了 CheckLogin 那么这个不生效
-    boolean checkLogin() default false;
+public @interface CheckLogin {
 }

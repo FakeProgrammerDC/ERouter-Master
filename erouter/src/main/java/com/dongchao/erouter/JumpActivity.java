@@ -13,68 +13,48 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
-public class JumpActivity implements IntentCall{
+public class JumpActivity implements IntentCall {
 
     private static final String TAG = "JumpActivity";
 
     private final Context currentContext;
     private final Class<?> loginActivityClass;
     private final Class<?> targetClass;
-    private final boolean isLogin;
+    private final boolean isCheckLogin;
     private final ERouter.LoginLogic loginLogic;
     private final Map<String, Object> parameterMap;
+    private Intent intent;
 
-    private static Handler mHandler;
-
-    JumpActivity(Class<?> loginActivityClass, Class<?> targetClass, boolean isLogin, ERouter.LoginLogic loginLogic, Map<String, Object> parameterMap) {
+    JumpActivity(Class<?> loginActivityClass, Class<?> targetClass, boolean isCheckLogin, ERouter.LoginLogic loginLogic, Map<String, Object> parameterMap) {
         Objects.requireNonNull(Utils.getTopActivity(), "TopActivity == null");
         this.currentContext = Utils.getTopActivity();
         this.loginActivityClass = loginActivityClass;
         this.targetClass = targetClass;
-        this.isLogin = isLogin;
+        this.isCheckLogin = isCheckLogin;
         this.loginLogic = loginLogic;
         this.parameterMap = parameterMap;
-        this.mHandler = new Handler(Looper.getMainLooper());
     }
 
     public Intent getIntent() {
-        AppLog.i(TAG, "in getIntent----- %s", "start");
-        //synchronized (currentContext) {
-            if (Utils.isFastDoubleClick()) {
-                AppLog.i(TAG, "触发了%s", "Utils.isFastDoubleClick()");
-                return null;
-            }
-        //}
-
-        Intent intent;
-
-        if (loginActivityClass != null && isLogin) {
-            //AppLog.i(TAG, "根据用户状态判断是否需要跳转登录页面");
+        AppLog.i(TAG, "getIntent start");
+        if (isCheckLogin) {
             intent = getIntentLoginOrTarget();
         } else {
             intent = new Intent(currentContext, targetClass);
         }
-
         //设置参数
         putExtra(intent);
-        AppLog.i(TAG, "in getIntent----- %s", "end");
+        AppLog.i(TAG, "getIntent end");
         return intent;
     }
 
-    public boolean start() {
-        AppLog.i(TAG, "启动了-----%s", "start");
-
-        final Intent intent = getIntent();
-        if (intent == null) {
-            return false;
-        }
-
-        //主线程跳转
-        runInMainThread(() -> {
-            AppLog.i(TAG, "启动成功-----%s", "end");
+    @Override
+    public boolean startIntent() {
+        AppLog.i(TAG, "startIntent start");
+        if (intent != null) {
             currentContext.startActivity(intent);
-        });
-
+        }
+        AppLog.i(TAG, "startIntent end");
         return true;
     }
 
@@ -110,23 +90,16 @@ public class JumpActivity implements IntentCall{
         }
     }
 
-    private void runInMainThread(Runnable runnable) {
-        if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
-            mHandler.post(runnable);
-        } else {
-            runnable.run();
-        }
-    }
-
     private Intent getIntentLoginOrTarget() {
         Objects.requireNonNull(loginLogic, "loginLogic == null");
+        Objects.requireNonNull(loginActivityClass, "loginActivityClass == null");
         return new Intent(currentContext, loginLogic.isLoginLogic() ? targetClass : loginActivityClass);
     }
 
     public static final class Builder {
         private Class<?> loginActivityClass;
         private Class<?> targetClass;
-        private boolean isLogin;
+        private boolean isCheckLogin;
         private ERouter.LoginLogic loginLogic;
         private Map<String, Object> parameterMap;
 
@@ -143,8 +116,8 @@ public class JumpActivity implements IntentCall{
             return this;
         }
 
-        public Builder setLogin(boolean isLogin) {
-            this.isLogin = isLogin;
+        public Builder setCheckLogin(boolean isCheckLogin) {
+            this.isCheckLogin = isCheckLogin;
             return this;
         }
 
@@ -159,7 +132,7 @@ public class JumpActivity implements IntentCall{
         }
 
         public JumpActivity build() {
-            return new JumpActivity(loginActivityClass, targetClass, isLogin, loginLogic, parameterMap);
+            return new JumpActivity(loginActivityClass, targetClass, isCheckLogin, loginLogic, parameterMap);
         }
     }
 }

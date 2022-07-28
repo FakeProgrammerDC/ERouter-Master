@@ -13,5 +13,5 @@ abstract class StartActivityMethod<T> {
     }
 
     //传递方法参数值
-    abstract T invoke(Object[] args);
+    abstract T invoke(TypeParameter typeParameter, Object[] args);
 }

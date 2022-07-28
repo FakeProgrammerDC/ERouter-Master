@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 
 
+import com.dongchao.erouter.Annotations.CheckLogin;
 import com.dongchao.erouter.Annotations.Extra;
 import com.dongchao.erouter.Annotations.TargetUrl;
 import com.dongchao.erouter.utils.AppLog;
@@ -24,7 +25,7 @@ final class RequestParameterFactory {
     private final Class<?> loginActivityClass;
     //private final Method method;
     private final Class<?> targetClass;
-    private final boolean isLogin;
+    private final boolean checkLogin;
     private final String[] parameterKeys;
 
     private RequestParameterFactory(Builder builder) {
@@ -32,11 +33,19 @@ final class RequestParameterFactory {
         loginActivityClass = builder.loginActivityClass;
         //method = builder.method;
         targetClass = builder.targetClass;
-        isLogin = builder.isLogin;
+        checkLogin = builder.checkLogin;
         parameterKeys = builder.parameterKeys;
     }
 
-    JumpActivity createJumpActivity(Object[] args) {
+    JumpActivity createJumpActivity(TypeParameter typeParameter, Object[] args) {
+
+        boolean isCheckLogin;
+
+        if (typeParameter != null) {
+            isCheckLogin = typeParameter.isCheckLogin ? true : checkLogin;
+        } else {
+            isCheckLogin = checkLogin;
+        }
 
         int argumentCount = args == null ? 0 : args.length;
 
@@ -47,13 +56,13 @@ final class RequestParameterFactory {
 
         for (int i = 0; i < argumentCount; i++) {
             parameterMap.put(parameterKeys[i], args[i]);
-            AppLog.i(TAG, "参数注解 key = %s , 参数 value = %s1", parameterKeys[i], args[i]);
+            AppLog.i(TAG, "参数注解 key = %s , 参数 value = %s", parameterKeys[i], args[i]);
         }
 
         return new JumpActivity.Builder()
                 .setLoginActivityClass(loginActivityClass)
                 .setTargetClass(targetClass)
-                .setLogin(isLogin)
+                .setCheckLogin(isCheckLogin)
                 .setLoginLogic(loginLogic)
                 .setParameterMap(parameterMap)
                 .build();
@@ -67,7 +76,7 @@ final class RequestParameterFactory {
         Annotation[] methodAnnotations;
         Annotation[][] parameterAnnotationsArray;
         Class<?> targetClass;
-        boolean isLogin = false;
+        boolean checkLogin;
         String[] parameterKeys;
         int parameterCount;
 
@@ -88,8 +97,8 @@ final class RequestParameterFactory {
                 if (annotation instanceof TargetUrl) {
                     TargetUrl targetUrl = (TargetUrl) annotation;
                     targetClass = targetUrl.value();
-                    isLogin = targetUrl.isLogin();
-                    AppLog.i(TAG, "方法注解 = %s 目标页面 = %s1", method.getName(), targetClass.getName());
+                    checkLogin = targetUrl.checkLogin();
+                    AppLog.i(TAG, "方法注解 = %s 目标页面 = %s", method.getName(), targetClass.getName());
                 }
             }
 
