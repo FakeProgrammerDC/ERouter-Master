@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TargetUrl {
+public @interface TargetPage {
 
     //目标Activity
     Class<?> value();

@@ -12,6 +12,5 @@ abstract class StartActivityMethod<T> {
         return RouterStartActivityMethod.parseAnnotations(router, method, requestBody);
     }
 
-    //传递方法参数值
     abstract T invoke(TypeParameter typeParameter, Object[] args);
 }

@@ -3,10 +3,8 @@ package com.dongchao.erouter;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 
-
-import com.dongchao.erouter.Annotations.CheckLogin;
 import com.dongchao.erouter.Annotations.Extra;
-import com.dongchao.erouter.Annotations.TargetUrl;
+import com.dongchao.erouter.Annotations.TargetPage;
 import com.dongchao.erouter.utils.AppLog;
 
 import java.lang.annotation.Annotation;
@@ -37,7 +35,7 @@ final class RequestParameterFactory {
         parameterKeys = builder.parameterKeys;
     }
 
-    JumpActivity createJumpActivity(TypeParameter typeParameter, Object[] args) {
+    JumpIntent createJumpIntent(TypeParameter typeParameter, Object[] args) {
 
         boolean isCheckLogin;
 
@@ -59,7 +57,7 @@ final class RequestParameterFactory {
             AppLog.i(TAG, "参数注解 key = %s , 参数 value = %s", parameterKeys[i], args[i]);
         }
 
-        return new JumpActivity.Builder()
+        return new JumpIntent.Builder()
                 .setLoginActivityClass(loginActivityClass)
                 .setTargetClass(targetClass)
                 .setCheckLogin(isCheckLogin)
@@ -92,17 +90,17 @@ final class RequestParameterFactory {
         }
 
         RequestParameterFactory build() {
-            //方法注解
+            //方法注解解析
             for (Annotation annotation : methodAnnotations) {
-                if (annotation instanceof TargetUrl) {
-                    TargetUrl targetUrl = (TargetUrl) annotation;
-                    targetClass = targetUrl.value();
-                    checkLogin = targetUrl.checkLogin();
+                if (annotation instanceof TargetPage) {
+                    TargetPage targetPage = (TargetPage) annotation;
+                    targetClass = targetPage.value();
+                    checkLogin = targetPage.checkLogin();
                     AppLog.i(TAG, "方法注解 = %s 目标页面 = %s", method.getName(), targetClass.getName());
                 }
             }
 
-            //参数注解
+            //参数注解解析
             for (int p = 0; p < parameterCount; p++) {
                 parameterKeys[p] = parseParameter(parameterAnnotationsArray[p]);
             }

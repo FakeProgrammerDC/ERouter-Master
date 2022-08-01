@@ -2,7 +2,6 @@ package com.dongchao.erouter;
 
 
 import com.dongchao.erouter.Annotations.CheckLogin;
-import com.dongchao.erouter.utils.AppLog;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -17,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ERouter {
 
-    //private static final String TAG = "ERouter";
+    private static final String TAG = "ERouter";
 
     private final Map<Method, StartActivityMethod<?>> startActivityMethodCache = new ConcurrentHashMap<>();
     private final Map<Class, TypeParameter> startActivityInterfaceCache = new ConcurrentHashMap<>();
@@ -37,6 +36,7 @@ public class ERouter {
             throw new IllegalArgumentException("API 声明必须是接口");
         }
 
+        // 解析接口上面的注解
         parseTypeAnnotations(service);
 
         return (T) Proxy.newProxyInstance(service.getClassLoader(), new Class<?>[]{service},
@@ -72,20 +72,32 @@ public class ERouter {
     }
 
     void parseTypeAnnotations(final Class<?> service) {
-        //解析接口注释
         Annotation[] annotations = service.getAnnotations();
-        for (Annotation annotation : annotations) {
-            if (annotation instanceof CheckLogin) {
-                startActivityInterfaceCache.put(service, new TypeParameter(true));
+        if (annotations.length == 0) {
+            return;
+        }
+        TypeParameter typeParameter = startActivityInterfaceCache.get(service);
+        if (typeParameter != null) {
+            return;
+        }
+
+        synchronized (startActivityInterfaceCache) {
+            typeParameter = startActivityInterfaceCache.get(service);
+            if (typeParameter != null) {
+                return;
+            }
+
+            for (Annotation annotation : annotations) {
+                if (annotation instanceof CheckLogin) {
+                    startActivityInterfaceCache.put(service, new TypeParameter(true));
+                }
             }
         }
     }
 
     TypeParameter getTypeParameter(Object proxy) {
         Class service = proxy.getClass().getInterfaces()[0];
-        TypeParameter typeParameter = startActivityInterfaceCache.get(service);
-        //AppLog.i(TAG, "开启校验");
-        return typeParameter;
+        return startActivityInterfaceCache.get(service);
     }
 
     public interface LoginLogic {
@@ -116,7 +128,7 @@ public class ERouter {
         }
 
         public ERouter build() {
-            routerAdapterFactories.add(new DefaultAdaptedFactory());
+            routerAdapterFactories.add(new DefaultRouterAdaptedFactory());
             return new ERouter(loginActivityClass, loginLogic, routerAdapterFactories);
         }
     }

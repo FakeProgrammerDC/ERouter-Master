@@ -4,30 +4,26 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.dongchao.erouter.DefaultAdaptedFactory;
 import com.dongchao.erouter.IntentCall;
 import com.dongchao.erouter.RouterAdapter;
 import com.dongchao.erouter.utils.AppLog;
-import com.dongchao.erouter.utils.Utils;
+import com.dongchao.sample.util.Utils;
 
 import java.lang.reflect.Type;
-import java.util.Date;
 
 public class MyRouterAdapterFactory extends RouterAdapter.Factory {
 
     @Override
     public RouterAdapter get(Type returnType) {
-        if (getRawType(returnType) == Intent.class) {
-            return (RouterAdapter<Object>) intentCall -> new MyRouterAdapterFactory.MyExecutorIntentCall(intentCall).getIntent();
-        } else {
-            return (RouterAdapter<Object>) intentCall -> new MyRouterAdapterFactory.MyExecutorIntentCall(intentCall).startIntent();
+        if (getRawType(returnType) != IntentCall.class) {
+            return null;
         }
+        return (RouterAdapter<Object>) intentCall -> new MyRouterAdapterFactory.MyExecutorIntentCall(intentCall);
     }
 
     static final class MyExecutorIntentCall implements IntentCall {
 
         private static final String TAG = "MyExecutorIntentCall";
-        //静态代理对象
         private final IntentCall delegate;
         private static Handler mHandler;
 
@@ -38,7 +34,6 @@ public class MyRouterAdapterFactory extends RouterAdapter.Factory {
 
         @Override
         public Intent getIntent() {
-            //执行代理对象
             AppLog.i(TAG, "my delegate getIntent start");
             Intent intent = delegate.getIntent();
             AppLog.i(TAG, "my delegate getIntent end");
@@ -50,8 +45,14 @@ public class MyRouterAdapterFactory extends RouterAdapter.Factory {
 
             AppLog.i(TAG, "my delegate startIntent start");
 
-            if (getIntent() == null) {
+            if (Utils.isFastDoubleClick()) {
                 return false;
+            }
+
+            synchronized (MyExecutorIntentCall.class) {
+                if (Utils.isFastDoubleClick()) {
+                    return false;
+                }
             }
 
             runInMainThread(() -> delegate.startIntent());

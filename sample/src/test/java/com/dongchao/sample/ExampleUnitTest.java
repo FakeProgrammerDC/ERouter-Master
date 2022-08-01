@@ -1,10 +1,8 @@
 package com.dongchao.sample;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-
-import java.text.Format;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

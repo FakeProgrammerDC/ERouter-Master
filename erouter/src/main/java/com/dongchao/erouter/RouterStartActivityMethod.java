@@ -14,31 +14,30 @@ abstract class RouterStartActivityMethod<ReturnT> extends StartActivityMethod<Re
     static RouterStartActivityMethod parseAnnotations(ERouter router, Method method,
                                                       RequestParameterFactory requestBody) {
 
-
-        RouterAdapter intentAdapter = router.routerAdapter(method.getReturnType());
-        return new IntentAdapted(requestBody, intentAdapter);
+        RouterAdapter routerAdapter = router.routerAdapter(method.getReturnType());
+        return new IntentAdapted(requestBody, routerAdapter);
     }
 
     @Override
     final ReturnT invoke(TypeParameter typeParameter, Object[] args) {
-        JumpActivity jumpActivity = requestBody.createJumpActivity(typeParameter, args);
-        return adapt(jumpActivity);
+        JumpIntent jumpIntent = requestBody.createJumpIntent(typeParameter, args);
+        return adapt(jumpIntent);
     }
 
     protected abstract ReturnT adapt(IntentCall intentCall);
 
     static final class IntentAdapted<ReturnT> extends RouterStartActivityMethod<ReturnT> {
 
-        private RouterAdapter intentAdapter;
+        private RouterAdapter routerAdapter;
 
-        IntentAdapted(RequestParameterFactory requestBody, RouterAdapter intentAdapter) {
+        IntentAdapted(RequestParameterFactory requestBody, RouterAdapter routerAdapter) {
             super(requestBody);
-            this.intentAdapter = intentAdapter;
+            this.routerAdapter = routerAdapter;
         }
 
         @Override
         protected ReturnT adapt(IntentCall intentCall) {
-            return (ReturnT) intentAdapter.adapt(intentCall);
+            return (ReturnT) routerAdapter.adapt(intentCall);
         }
     }
 }

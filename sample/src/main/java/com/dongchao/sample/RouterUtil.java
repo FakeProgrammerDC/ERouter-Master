@@ -5,13 +5,13 @@ import com.dongchao.erouter.ERouter;
 import com.dongchao.sample.ui.LoginActivity;
 import com.dongchao.sample.util.LoginStatus;
 
-public class StartActivityUtil {
+public class RouterUtil {
 
-    private StartActivityUtil() {
+    private RouterUtil() {
         ERouter router = new ERouter.Builder()
                 .setLoginActivityClass(LoginActivity.class)
-                .setLoginLogic(() -> LoginStatus.getLoginStatus())
-                //.addRouterAdapterFactory(new MyRouterAdapterFactory())
+                .setLoginLogic(LoginStatus::getLoginStatus)
+                .addRouterAdapterFactory(new MyRouterAdapterFactory())
                 .build();
         startActivity = router.create(StartActivityApi.class);
         checkLoginStartActivity = router.create(CheckLoginStartActivityApi.class);
@@ -29,6 +29,6 @@ public class StartActivityUtil {
     }
 
     static final class Holder {
-        private static final StartActivityUtil INSTANCE = new StartActivityUtil();
+        private static final RouterUtil INSTANCE = new RouterUtil();
     }
 }

@@ -2,7 +2,6 @@ package com.dongchao.erouter.utils;
 
 
 import android.app.Activity;
-import android.app.Application;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
@@ -13,18 +12,6 @@ import java.lang.reflect.WildcardType;
 import java.util.Objects;
 
 public class Utils {
-
-    private volatile static long lastClickTime;
-
-    public static boolean isFastDoubleClick() {
-        long time = System.currentTimeMillis();
-        long timeD = time - lastClickTime;
-        if (0 < timeD && timeD < 600) {
-            return true;
-        }
-        lastClickTime = time;
-        return false;
-    }
 
     public static Activity getTopActivity() {
         return UtilsActivityLifecycleImpl.INSTANCE.getTopActivity();

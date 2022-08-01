@@ -2,8 +2,6 @@ package com.dongchao.erouter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Parcelable;
 
 import com.dongchao.erouter.utils.AppLog;
@@ -13,7 +11,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
-public class JumpActivity implements IntentCall {
+public class JumpIntent implements IntentCall {
 
     private static final String TAG = "JumpActivity";
 
@@ -25,8 +23,7 @@ public class JumpActivity implements IntentCall {
     private final Map<String, Object> parameterMap;
     private Intent intent;
 
-    JumpActivity(Class<?> loginActivityClass, Class<?> targetClass, boolean isCheckLogin, ERouter.LoginLogic loginLogic, Map<String, Object> parameterMap) {
-        Objects.requireNonNull(Utils.getTopActivity(), "TopActivity == null");
+    JumpIntent(Class<?> loginActivityClass, Class<?> targetClass, boolean isCheckLogin, ERouter.LoginLogic loginLogic, Map<String, Object> parameterMap) {
         this.currentContext = Utils.getTopActivity();
         this.loginActivityClass = loginActivityClass;
         this.targetClass = targetClass;
@@ -37,13 +34,21 @@ public class JumpActivity implements IntentCall {
 
     public Intent getIntent() {
         AppLog.i(TAG, "getIntent start");
-        if (isCheckLogin) {
-            intent = getIntentLoginOrTarget();
-        } else {
-            intent = new Intent(currentContext, targetClass);
+
+        if (currentContext == null) {
+            AppLog.e(TAG, "currentContext == null");
+            return null;
         }
-        //设置参数
-        putExtra(intent);
+
+        if (intent == null) {
+            if (isCheckLogin) {
+                intent = getIntentLoginOrTarget();
+            } else {
+                intent = new Intent(currentContext, targetClass);
+            }
+            //设置参数
+            putExtra(intent);
+        }
         AppLog.i(TAG, "getIntent end");
         return intent;
     }
@@ -51,9 +56,15 @@ public class JumpActivity implements IntentCall {
     @Override
     public boolean startIntent() {
         AppLog.i(TAG, "startIntent start");
-        if (intent != null) {
-            currentContext.startActivity(intent);
+
+        Intent intent = getIntent();
+
+        if (intent == null) {
+            AppLog.e(TAG, "启动异常 intent == null");
+            return false;
         }
+
+        currentContext.startActivity(intent);
         AppLog.i(TAG, "startIntent end");
         return true;
     }
@@ -131,8 +142,8 @@ public class JumpActivity implements IntentCall {
             return this;
         }
 
-        public JumpActivity build() {
-            return new JumpActivity(loginActivityClass, targetClass, isCheckLogin, loginLogic, parameterMap);
+        public JumpIntent build() {
+            return new JumpIntent(loginActivityClass, targetClass, isCheckLogin, loginLogic, parameterMap);
         }
     }
 }
